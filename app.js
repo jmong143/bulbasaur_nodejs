@@ -6,6 +6,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var routeSetting = require('./routes/settings');
+var methodOverride = require('method-override')
+
+
 mongoose.connect('mongodb://localhost/ipostmo-v2');
 //mongoose.on('error', console.error.bind(console, 'connection error:'));
 var app = express();
@@ -18,6 +21,9 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
+
+// override with POST having ?_method=PUT
+app.use(methodOverride('_method'))
 
 app.use( routeSetting);
 

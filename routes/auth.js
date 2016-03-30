@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var mongoose = require('mongoose');
+var tokenizer = require("../util/jwt-tokenizer");
 var configureRouting = require('../services/RouteService');
 var User = require('../models/user');
 //settings = {modelName: route-alias};
@@ -40,6 +42,43 @@ router.get('/custom-auth-1' , function(req, res, next) {
   });
 });
 
+
+router.get('/register', function(req, res){
+		res.render('auth/signup');
+});
+
+router.post('/register',function(req, res, next) {
+  passport.authenticate('signup',{ session: true },function(err, signup, info) {
+    if (err) {
+      return next(err);
+    }
+    if (! signup) {
+      var objRegister = {
+        message: "failed",
+        result: "failed",
+        resultMessage: "Validation Message here"
+        }
+    }else{
+      var objRegister = {
+          message: "success",
+          result: "success",
+          resultMessage: "Congratulations, You have successfully registered to ipostmo.com"
+      }
+      return res.send(objRegister);
+    }
+  })(req, res, next);
+ });
+
+ router.get('/token', function(req, res) {
+   var user = {username: "akousername", fullname: "akofullname"};
+   var token = tokenizer.sign(user);
+   res.send(token);
+ });
+
+ router.get('/decode', tokenizer.verify, function(req, res, next) {
+   res.send(JSON.stringify(req.decoded));
+ });
+
 router.get('/login', function(req, res) {
   res.render('auth/login');
 });
@@ -50,29 +89,38 @@ router.post('/login', function(req, res, next) {
       return next(err);
     }
     if (! user) {
-      var jsonFailedLogin = {
+      var objLoginFailed = {
         message : 'failed',
-        authorize : 'false',
+        authorize : 'false'
       }
-      return res.send(jsonFailedLogin);
+      return res.send(objLoginFailed);
     }
     req.login(user, loginErr => {
       if (loginErr) {
         return next(loginErr);
       }
-      var jsonSuccessLogin = {
+      var objLoginSuccess = {
         message : 'success',
         authorize : 'true',
+        currentUser: {
+          objectId : req.user._id,
+          username : req.user.username,
+          email: req.user.email,
+          fullname: req.user.fullname
+        }
       }
-      return res.send(jsonSuccessLogin);
+
+
+
+      return res.send(objLoginSuccess);
     });
   })(req, res, next);
 });
 
 
-router.get('/me', isAuthenticated, function(req, res){
-  //res.render('home', { user: req.user });
-  var jsonMe = {
+router.get('/me', function(req, res){
+  var objMe = {
+      token : req.user.token,
       message: "success",
       currentUser: {
         objectId : req.user._id,
@@ -81,106 +129,79 @@ router.get('/me', isAuthenticated, function(req, res){
         fullname: req.user.fullname
       }
     }
-  res.send(jsonMe);
+  res.send(objMe);
+});
+
+
+router.get('/profile', isAuthenticated, function(req, res){
+  var objProfile = {
+      message: "success",
+      currentUser: {
+        objectId : req.user._id,
+        username : req.user.username,
+        email: req.user.email,
+        fullname: req.user.fullname
+      }
+    }
+  res.send(objProfile);
 });
 
 
 router.get('/get-profile', function(req, res){
   var userId = req.query.objectId;
-  console.log("----------->" + userId);
   AuthenticationController.profile(userId, function(err, list){
     var user = list[0];
     res.send(user);
   });
 });
 
-router.get('/edit/:userid', isAuthenticated, function(req, res){
+router.get('/edit', isAuthenticated, function(req, res){
   res.render('auth/edit', { user: req.user });
 });
 
-router.put('/edit/:userid', isAuthenticated, function(req, res){
-  User.findByIdAndUpdate({_id: "56e116319791f889b0a3eee9"}, { $set: {email: "false@gmail.com"}} ,function (err, user) {
-      callback(err, user);
+router.post('/update', isAuthenticated, function(req, res){
+  var objectId = req.user.objectId;
+  AuthenticationController.updateProfile(req, res, objectId, function(err, list){
+    res.send(user);
   });
 });
 
 
 router.get('/profile/:userid', function(req, res){
-		User.count({objectId: req.params.userid}, function (err, count){
-			if(err){
-				var jsonFailedUserProfile = {
-					message: "Not Found"
-				}
-				res.send(jsonFailedUserProfile);
-			}
-
-	    if (count > 0) {
-				User.findOne({ objectId : req.params.userid }, function(err, users){
-
-					var jsonSuccessUserProfile = {
-						message: "success",
-						currentUser: {
-							objectId : req.params.userid,
-							username : users.username,
-							email: users.email,
-							fullname: users.fullname
-						}
-					}
-					res.send(jsonSuccessUserProfile);
-				});
-	    }
-		});
+  var userId = req.params.userid;
+  AuthenticationController.profileById(userId, function(err, list){
+    var user = list[0];
+    res.send(user);
   });
+});
 
 router.get('/forgot-password', function(req, res){
-  res.send("test send");
+  res.render("auth/forgot");
 });
 
-router.get('/signup', function(req, res){
-		res.render('auth/signup');
+router.post('/forgot-password', function(req, res){
+  var email = req.body.email;
+  AuthenticationController.forgotPassword(email, function(err, list){
+    var user = list[0];
+    res.send(user);
+  });
 });
 
-router.post('/signup', passport.authenticate('signup', {
-		successRedirect: '/register',
-		failureRedirect: '/signup-failed',
-		failureFlash : true
-}));
-
-router.get('/signup-failed', function(req, res){
-		var jsonFailedRegistration = {
-			message: "failed",
-			result: "failed",
-			resultMessage: "Validation Message here"
-			}
-			res.send(jsonFailedRegistration);
-});
-
-router.get('/register', function(req, res){
-		var jsonSuccessRegistration = {
-			message: "success",
-			result: "success",
-			resultMessage: "Congratulations, You have successfully registered to ipostmo.com"
-			}
-			res.send(jsonSuccessRegistration);
-});
-
-router.get('/logout', isAuthenticated, function(req, res) {
+router.get('/logout', function(req, res) {
   if (req.isAuthenticated()){
     req.session.destroy(function(err) {
-      var jsonSuccessLogout = {
-      result: "success",
-      resultMessage: "Congratulations, You have successfully logged out."
-        }
-      res.send(jsonSuccessLogout);
-    });
-  }
-  else{
-    var jsonFailedLogout = {
-        result: "failed",
-        resultMessage: "Validation Message here"
+      var objLogout = {
+        result: "success",
+        resultMessage: "Congratulations, You have successfully logged out."
       }
-    res.send(jsonFailedLogout);
-
+      res.send(objLogout);
+    });
+  }else{
+    var objLogout = {
+        result: "failed",
+        resultMessage: "User not login"
+      }
+      res.send(objLogout);
   }
 });
 

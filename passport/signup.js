@@ -1,6 +1,7 @@
 var LocalStrategy   = require('passport-local').Strategy;
 var User = require('../models/user');
 var bCrypt = require('bcrypt-nodejs');
+var tokenizer = require("../util/jwt-tokenizer");
 var AuthenticationController = require('../controllers/AuthenticationController');
 
 module.exports = function(passport){

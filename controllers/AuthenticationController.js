@@ -1,5 +1,7 @@
 //Sample Implementation
-//  var User = require('../models/user');
+var User = require('../models/user');
+var tokenizer = require("../util/jwt-tokenizer");
+var bCrypt = require('bcrypt-nodejs');
   var BaseController = require('../controllers/BaseCRUDController')("user");
 //    var Controller = require('../controllers/BaseCRUDController')(model);
   var MyOwnController = {
@@ -7,30 +9,60 @@
         callback("IM IN LOGIN");
       },
 
-      profile : function( userId, callback){
-          /*
-          this.model.findOne({ objectId : userId }, function(err, users){
-            var jsonSessionProfile = {
-              message: "success",
-              currentUser: {
-                objectId : users.objectId,
-                username : users.username,
-                email: users.email,
-                fullname: users.fullname
-              }
-            }
-            callback(jsonSessionProfile);
-            //res.send(jsonSessionProfile);
-          });
-          */
+      profile : function(req, userId, callback){
+        var userId = req.user.userId;
           var searchCriteria = {"objectId" : userId};
           this.search(searchCriteria, function(err, list){
-              //callback(err, list)
               callback(err, list)
           });
       },
 
+      profileById : function( userId, callback){
+          var searchCriteria = {"objectId" : userId};
+          this.search(searchCriteria, function(err, list){
+              callback(err, list)
+          });
+      },
 
+      forgotPassword : function( email, callback){
+          var searchCriteria = {"email" : email};
+          this.search(searchCriteria, function(err, list){
+              callback(err, list)
+          });
+      },
+
+      updateProfile : function(req, res, objectId, callback){
+          User.findOne({ "objectId": objectId }, function (err, user) {
+            if (err) return res.send(err);
+              var password = req.body.password;
+              user.username = req.body.username;
+              user.password = createHash(password);
+              user.address = req.body.address;
+              user.birthdate = req.body.birthdate;
+              user.contact = req.body.contact;
+              user.email = req.body.email;
+              user.fullname = req.body.fullname;
+              user.save (function (err, result) {
+                if (err) {
+                  obj = {
+                    result: "failed",
+                    resultMessage: "Failed to update"
+                  }
+                }else{
+                  obj = {
+                    result: "success",
+                    resultMessage: "Congratulations, Profile Updated"
+                  }
+                }
+                console.log(obj);
+                //return result(obj);
+                return res.send(obj);
+              });
+            });
+            var createHash = function(password){
+                return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
+            }
+      },
 
       getDateTime: function(){
         var date = new Date();

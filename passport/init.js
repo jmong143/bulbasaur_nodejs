@@ -12,6 +12,8 @@ module.exports = function(passport){
     passport.deserializeUser(function(id, done) {
         User.findById(id, function(err, user) {
             console.log('deserializing user:',user);
+            user.token = "SAMPLETOKEN....";
+            console.log("------------->" + user.token);
             done(err, user);
         });
     });
