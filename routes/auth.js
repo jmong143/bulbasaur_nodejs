@@ -47,7 +47,7 @@ router.get('/register', function(req, res){
 		res.render('auth/signup');
 });
 
-router.post('/register',function(req, res, next) {
+router.post('/register',function(req, res, next) { 
   passport.authenticate('signup',{ session: true },function(err, signup, info) {
     if (err) {
       return next(err);
