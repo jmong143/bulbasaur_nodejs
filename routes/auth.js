@@ -114,7 +114,8 @@ router.post('/login', function(req, res, next) {
           objectId : req.user.objectId,
           username : req.user.username,
           email: req.user.email,
-          fullname: req.user.fullname
+          fullname: req.user.fullname,
+          token : req.user.token
         }
       }
       currentMeGlobal = objLoginSuccess.currentMe;
