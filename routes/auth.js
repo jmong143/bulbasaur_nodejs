@@ -3,6 +3,8 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var tokenizer = require("../util/jwt-tokenizer");
 var configureRouting = require('../services/RouteService');
+var config = require('../config/application-settings');
+
 var User = require('../models/user');
 //settings = {modelName: route-alias};
 var settings = [
@@ -26,7 +28,7 @@ var isAuthenticated = function (req, res, next) {
 
 	res.redirect('/login');
 }
-
+var currentMeGlobal = {}
 module.exports = function(passport){
 //CustomController codes here
 
@@ -47,7 +49,7 @@ router.get('/register', function(req, res){
 		res.render('auth/signup');
 });
 
-router.post('/register',function(req, res, next) { 
+router.post('/register',function(req, res, next) {
   passport.authenticate('signup',{ session: true },function(err, signup, info) {
     if (err) {
       return next(err);
@@ -103,32 +105,48 @@ router.post('/login', function(req, res, next) {
         message : 'success',
         authorize : 'true',
         currentUser: {
+          objectId : req.user.objectId,
+          username : req.user.username,
+          email: req.user.email,
+          fullname: req.user.fullname
+        },
+        currentMe: {
+          objectId : req.user.objectId,
+          username : req.user.username,
+          email: req.user.email,
+          fullname: req.user.fullname
+        }
+      }
+      currentMeGlobal = objLoginSuccess.currentMe;
+      return res.send(objLoginSuccess);
+    });
+  })(req, res, next);
+});
+
+//var tokenUser = tokenizer.verify;
+//var currentObjectId = "2rOrhGKkY3";
+router.get('/me', function(req, res){
+  var objMe = currentMeGlobal;
+/*
+   if(!req.user){
+    var objMe = {
+      message: "failed",
+      result: "Please Login",
+    }
+  }else{
+
+    var objMe = {
+        token : req.user.token,
+        message: "success",
+        currentUser: {
           objectId : req.user._id,
           username : req.user.username,
           email: req.user.email,
           fullname: req.user.fullname
         }
       }
+  } */
 
-
-
-      return res.send(objLoginSuccess);
-    });
-  })(req, res, next);
-});
-
-
-router.get('/me', function(req, res){
-  var objMe = {
-      token : req.user.token,
-      message: "success",
-      currentUser: {
-        objectId : req.user._id,
-        username : req.user.username,
-        email: req.user.email,
-        fullname: req.user.fullname
-      }
-    }
   res.send(objMe);
 });
 
@@ -204,9 +222,6 @@ router.get('/logout', function(req, res) {
       res.send(objLogout);
   }
 });
-
-
-
 
 
 //module.exports = router;

@@ -6,7 +6,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var routeSetting = require('./routes/settings');
-var methodOverride = require('method-override')
+var methodOverride = require('method-override');
+
+var config = require('./config/application-settings');
 
 
 mongoose.connect('mongodb://localhost/ipostmo-v2');
@@ -57,7 +59,7 @@ initPassport(passport);
 
 var auth = require('./routes/auth')(passport);
 
-app.use('/', auth);
+app.use(config.projectBaseURL, auth);
 
 
 
