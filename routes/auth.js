@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var tokenizer = require("../util/jwt-tokenizer");
 var configureRouting = require('../services/RouteService');
 var config = require('../config/application-settings');
+var merge = require('merge'), original, cloned;
 
 var User = require('../models/user');
 //settings = {modelName: route-alias};
@@ -45,11 +46,11 @@ router.get('/custom-auth-1' , function(req, res, next) {
 });
 
 
-router.get('/register', function(req, res){
+router.get('/signup', function(req, res){
 		res.render('auth/signup');
 });
 
-router.post('/register',function(req, res, next) {
+router.post('/signup',function(req, res, next) {
   passport.authenticate('signup',{ session: true },function(err, signup, info) {
     if (err) {
       return next(err);
@@ -58,7 +59,7 @@ router.post('/register',function(req, res, next) {
       var objRegister = {
         message: "failed",
         result: "failed",
-        resultMessage: "Validation Message here"
+        resultMessage: "Username is already Exists"
         }
     }else{
       var objRegister = {
@@ -66,8 +67,8 @@ router.post('/register',function(req, res, next) {
           result: "success",
           resultMessage: "Congratulations, You have successfully registered to ipostmo.com"
       }
-      return res.send(objRegister);
     }
+    return res.send(objRegister);
   })(req, res, next);
  });
 
@@ -128,6 +129,15 @@ router.post('/login', function(req, res, next) {
 //var currentObjectId = "2rOrhGKkY3";
 router.get('/me', function(req, res){
   var objMe = currentMeGlobal;
+  var isEmptySession = Object.keys(objMe).length;
+  if(isEmptySession == 0){
+    objMe = {message: "failed",result: "User is not yet logged in"}
+    res.send(objMe);
+  }else{
+    var objMeSuccess = {message: "success"}
+    var objMe = merge(objMe, objMeSuccess);
+    res.send(objMe);
+  }
 /*
    if(!req.user){
     var objMe = {
@@ -147,8 +157,6 @@ router.get('/me', function(req, res){
         }
       }
   } */
-
-  res.send(objMe);
 });
 
 
@@ -207,7 +215,7 @@ router.post('/forgot-password', function(req, res){
 });
 
 router.get('/logout', function(req, res) {
-  if (req.isAuthenticated()){
+/*  if (req.isAuthenticated()){
     req.session.destroy(function(err) {
       var objLogout = {
         result: "success",
@@ -221,7 +229,36 @@ router.get('/logout', function(req, res) {
         resultMessage: "User not login"
       }
       res.send(objLogout);
+  } */
+
+  var objLogout = currentMeGlobal;
+  var isEmptySession = Object.keys(objLogout).length;
+  if(isEmptySession == 0){
+    objLogout = {message: "failed",result: "User is not yet logged in"}
+  }else{
+    req.session.destroy();
+    currentMeGlobal = {}
+    objLogout = {message: "success",result: "Congratulations, You have successfully logged out."}
   }
+  res.send(objLogout);
+
+
+
+
+
+  /* var objLogout = currentMeGlobal;
+  var isEmptySession = Object.keys(objMe).length;
+  if(isEmptySession == 0){
+    objLogout = {message: "failed",result: "user not yet logged in"}
+    console.log("came from logout--->" + currentMeGlobal);
+  }else{
+    var objLogout = {
+      result: "success",
+      resultMessage: "Congratulations, You have successfully logged out."
+    }
+    res.send(objLogout);
+  } */
+
 });
 
 

@@ -52,7 +52,8 @@ module.exports = function(passport){
                             if (err){
                                 console.log('Error in Saving user: '+ err);
 																//res.send("ERROR" + err);
-																throw err;
+																return done(null, "Error in Saving User");
+																//throw err;
                             }
 														console.log('User Registration succesful');
 														//res.send("Success" + newUser);
