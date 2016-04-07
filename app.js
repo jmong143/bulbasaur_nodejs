@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var routeSetting = require('./routes/settings');
-var methodOverride = require('method-override');
+//var methodOverride = require('method-override');
 
 var config = require('./config/application-settings');
 
@@ -25,9 +25,13 @@ app.use(function (req, res, next) {
 });
 
 // override with POST having ?_method=PUT
-app.use(methodOverride('_method'))
+//app.use(methodOverride('_method'))
 
 app.use( routeSetting);
+
+
+
+
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

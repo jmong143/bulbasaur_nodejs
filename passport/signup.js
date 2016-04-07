@@ -43,6 +43,7 @@ module.exports = function(passport){
 													//"createdAt" 		: 	AuthenticationController.getDateTime(),
 													"password" 			: 	newUser.password,
 													"address" 			: 	newUser.address,
+													"avatar"				:		newUser.avatar
 													//"updatedAt" 		: 	AuthenticationController.getDateTime()
 												}
 												/* newUser.createdAt = AuthenticationController.getDateTime();

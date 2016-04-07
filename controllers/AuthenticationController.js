@@ -10,7 +10,7 @@ var bCrypt = require('bcrypt-nodejs');
       },
 
       profile : function(req, userId, callback){
-        var userId = req.user.userId;
+          var userId = req.user.userId;
           var searchCriteria = {"objectId" : userId};
           this.search(searchCriteria, function(err, list){
               callback(err, list)
@@ -94,6 +94,10 @@ var bCrypt = require('bcrypt-nodejs');
           objectId += ramdomObject.charAt(Math.floor(Math.random()*ramdomObject.length));
 
           return objectId;
+      },
+
+      makeHashPassword : function(password){
+        return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
       }
   };
 

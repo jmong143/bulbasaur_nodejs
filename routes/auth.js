@@ -6,7 +6,7 @@ var configureRouting = require('../services/RouteService');
 var config = require('../config/application-settings');
 var merge = require('merge'), original, cloned;
 
-var User = require('../models/user');
+var UserModel = require('../models/user');
 //settings = {modelName: route-alias};
 var settings = [
   //{ modelName: "banner", route: "banner" },
@@ -27,8 +27,9 @@ var isAuthenticated = function (req, res, next) {
 	if (req.isAuthenticated())
 		return next();
 
-	res.redirect('/login');
+	res.redirect('/ipostmo-auth/login');
 }
+var currentProfileGlobal = {}
 var currentMeGlobal = {}
 module.exports = function(passport){
 //CustomController codes here
@@ -102,24 +103,35 @@ router.post('/login', function(req, res, next) {
       if (loginErr) {
         return next(loginErr);
       }
+      var token = tokenizer.sign(user);
       var objLoginSuccess = {
         message : 'success',
         authorize : 'true',
+        token : token
+      }
+      var sessionProfile = {
+        message: "success",
         currentUser: {
-          objectId : req.user.objectId,
-          username : req.user.username,
-          email: req.user.email,
-          fullname: req.user.fullname
-        },
-        currentMe: {
-          objectId : req.user.objectId,
-          username : req.user.username,
-          email: req.user.email,
-          fullname: req.user.fullname,
-          token : req.user.token
+        objectId : req.user.objectId,
+        username : req.user.username,
+        fullname: req.user.fullname,
+        email: req.user.email,
+        avatar:  req.user.avatar
         }
       }
-      currentMeGlobal = objLoginSuccess.currentMe;
+      var userProfile = {
+        message: "success",
+        objectId : req.user.objectId,
+        username : req.user.username,
+        fullname: req.user.fullname,
+        email: req.user.email,
+        address: req.user.address,
+        contact: req.user.contact,
+        birthdate: req.user.birthdate,
+        avatar: req.user.avatar
+      }
+      currentMeGlobal = sessionProfile;
+      currentProfileGlobal = userProfile;
       return res.send(objLoginSuccess);
     });
   })(req, res, next);
@@ -134,45 +146,22 @@ router.get('/me', function(req, res){
     objMe = {message: "failed",result: "User is not yet logged in"}
     res.send(objMe);
   }else{
-    var objMeSuccess = {message: "success"}
-    var objMe = merge(objMe, objMeSuccess);
-    res.send(objMe);
+    res.send(currentProfileGlobal);
   }
-/*
-   if(!req.user){
-    var objMe = {
-      message: "failed",
-      result: "Please Login",
-    }
+});
+
+router.get('/profile', function(req, res){
+  var objProfile = currentMeGlobal;
+  var isEmptySession = Object.keys(objProfile).length;
+  if(isEmptySession == 0){
+    objProfile = {message: "failed",result: "User is not yet logged in"}
+    res.send(objProfile);
   }else{
-
-    var objMe = {
-        token : req.user.token,
-        message: "success",
-        currentUser: {
-          objectId : req.user._id,
-          username : req.user.username,
-          email: req.user.email,
-          fullname: req.user.fullname
-        }
-      }
-  } */
+    // var objProfileSuccess = {message: "success"}
+    //var objProfile = merge(objProfile, objProfileSuccess);
+    res.send(objProfile);
+  }
 });
-
-
-router.get('/profile', isAuthenticated, function(req, res){
-  var objProfile = {
-      message: "success",
-      currentUser: {
-        objectId : req.user._id,
-        username : req.user.username,
-        email: req.user.email,
-        fullname: req.user.fullname
-      }
-    }
-  res.send(objProfile);
-});
-
 
 router.get('/get-profile', function(req, res){
   var userId = req.query.objectId;
@@ -182,23 +171,72 @@ router.get('/get-profile', function(req, res){
   });
 });
 
-router.get('/edit', isAuthenticated, function(req, res){
+router.get('/update', isAuthenticated, function(req, res){
   res.render('auth/edit', { user: req.user });
 });
 
-router.post('/update', isAuthenticated, function(req, res){
-  var objectId = req.user.objectId;
-  AuthenticationController.updateProfile(req, res, objectId, function(err, list){
-    res.send(user);
+router.post('/update', function(req, res){
+  //var objectId = req.user.objectId;
+  //var objectId = "ttjnXLHQt7";
+  /*UserModel.update({'objectId':"ttjnXLHQt7"}, {$set: {email : "k@gmail.com"}},function(err, result){
+    console.log(result);
+  });*/
+
+  var currentObjectId = req.body.currentObjectId;
+  console.log("object id for update ------------->" + currentObjectId);
+  var password = req.body.password;
+  var hashPass = AuthenticationController.makeHashPassword(password);
+
+  UserModel.update({'objectId': currentObjectId},
+  {$set: {
+      username : req.body.username,
+      password :hashPass,
+      address : req.body.address,
+      birthdate : req.body.birthdate,
+      contact : req.body.contact,
+      email : req.body.email,
+      fullname : req.body.fullname
+    }
+  },function(err, result){
+    if (err) {
+      obj = {
+        message: "failed",
+        resultMessage: "Failed to update, Please make sure you completed the form"
+      }
+    }else{
+      obj = {
+        message: "success",
+        resultMessage: "Congratulations, Your Profile is Updated!"
+      }
+    }
+    console.log("this is obj" + JSON.stringify(obj));
+    return res.send(obj)
   });
+
+
+/*  AuthenticationController.updateProfile(req, res, objectId, function(err, list){
+    res.send(list);
+  }); */
 });
 
 
 router.get('/profile/:userid', function(req, res){
   var userId = req.params.userid;
   AuthenticationController.profileById(userId, function(err, list){
-    var user = list[0];
-    res.send(user);
+    var userInfo = list[0];
+    if (list == ""){
+      obj = {
+        message: "failed",
+        resultMessage: "Failed to Retrieve User Information"
+      };
+    }else{
+      obj = {
+        message: "success",
+        resultMessage: "Successfully Retrieve User Information",
+        userInfo
+      };
+    }
+    res.send(obj);
   });
 });
 
@@ -234,11 +272,11 @@ router.get('/logout', function(req, res) {
   var objLogout = currentMeGlobal;
   var isEmptySession = Object.keys(objLogout).length;
   if(isEmptySession == 0){
-    objLogout = {message: "failed",result: "User is not yet logged in"}
+    objLogout = {message: "failed",resultMessage: "Failed to Logout! Make sure you're Logged in!"}
   }else{
     req.session.destroy();
     currentMeGlobal = {}
-    objLogout = {message: "success",result: "Congratulations, You have successfully logged out."}
+    objLogout = {message: "success",resultMessage: "Congratulations, You have successfully logged out."}
   }
   res.send(objLogout);
 
