@@ -5,7 +5,7 @@ var tokenizer = require("../util/jwt-tokenizer");
 var configureRouting = require('../services/RouteService');
 var config = require('../config/application-settings');
 var merge = require('merge'), original, cloned;
-
+var ProceedUrl = "http://localhost:8000/";
 var UserModel = require('../models/user');
 //settings = {modelName: route-alias};
 var settings = [
@@ -128,7 +128,8 @@ router.post('/login', function(req, res, next) {
         address: req.user.address,
         contact: req.user.contact,
         birthdate: req.user.birthdate,
-        avatar: req.user.avatar
+        avatar: req.user.avatar,
+        emailVerified: req.user.emailVerified
       }
       currentMeGlobal = sessionProfile;
       currentProfileGlobal = userProfile;
@@ -250,6 +251,35 @@ router.post('/forgot-password', function(req, res){
     var user = list[0];
     res.send(user);
   });
+});
+
+router.get('/mail-signup/:objectId', function(req, res){
+  var updateObjectId = req.params.objectId;
+  console.log("passed OBJECT ID " + updateObjectId);
+    UserModel.update({'objectId': updateObjectId},
+    {$set: {
+        emailVerified : true
+      }
+    },function(err, result){
+      UserModel.findOne({ "objectId": updateObjectId }, function (err, user) {
+      console.log("THIS IS USER UPDATED ->" + JSON.stringify(user));
+      var userUpdatedProfile = {
+        message: "success",
+        objectId : user.objectId,
+        username : user.username,
+        fullname: user.fullname,
+        email: user.email,
+        address: user.address,
+        contact: user.contact,
+        birthdate: user.birthdate,
+        avatar: user.avatar,
+        emailVerified: user.emailVerified
+      }
+      currentProfileGlobal = userUpdatedProfile;
+       res.render("auth/email-signup");
+    });
+  });
+
 });
 
 router.get('/logout', function(req, res) {

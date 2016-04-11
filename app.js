@@ -29,7 +29,7 @@ app.use(function (req, res, next) {
 
 app.use( routeSetting);
 
-
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 
 
