@@ -4,18 +4,6 @@ var bCrypt = require('bcrypt-nodejs');
 var tokenizer = require("../util/jwt-tokenizer");
 
 
-
-
-var nodemailer = require('nodemailer');
-var transporter = nodemailer.createTransport({
-		service: 'Gmail',
-		auth: {
-				user: 'jhonlance.37@gmail.com',
-				pass: 'stupidbadass123'
-		}
-});
-
-
 var AuthenticationController = require('../controllers/AuthenticationController');
 
 module.exports = function(passport){
@@ -74,8 +62,8 @@ module.exports = function(passport){
 														//res.send("Success" + newUser);
 														var email = req.body.email;
 														var newObjectId = newUser.objectId;
-
-														sendMail(email, newObjectId);
+														 AuthenticationController.sendMailVerify(email, newObjectId)
+													//	sendMail(email, newObjectId);
 														return done(null, newUser);
                         });
                     }
@@ -88,22 +76,4 @@ module.exports = function(passport){
     var createHash = function(password){
         return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
     }
-
-		var sendMail = function(email, objectId){
-			console.log("new object ID-> " + objectId);
-			var emailTemplate = '<div style="text-decoration: underline;"><a href = "http://localhost:2000/ipostmo-auth/mail-signup/'+ objectId +'">click to verify your account101</a></div>';
-			var mailOptions = {
-				from: '"Ipostmo.com" <ipostmo@gmail.com>', // sender address
-				to: 'email,' + email, // list of receivers
-				subject: 'Welcome to Ipostmo.com!', // Subject line
-				text: 'Ipostmo.com Verification', // plaintext body
-				html: emailTemplate // html body
-			};
-			transporter.sendMail(mailOptions, function(error, info){
-				if(error){
-						return console.log(error);
-			}
-			console.log('Message sent: ' + info.response);
-			});
-		}
 }
