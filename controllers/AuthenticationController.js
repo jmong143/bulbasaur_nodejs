@@ -66,6 +66,14 @@ var nodemailer = require('nodemailer');
             }
       },
 
+      fetchData: function(parameter, req, res, callback){
+        UserModel.find( { $or:[ {'objectId':parameter}]},
+          function(err, users){
+            if(!err)
+            return res.send(users);
+        });
+      },
+
       getDateTime: function(){
         var date = new Date();
 
