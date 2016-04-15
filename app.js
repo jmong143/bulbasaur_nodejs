@@ -48,8 +48,12 @@ var passport = require('passport');
 var expressSession = require('express-session');
 app.use(expressSession({secret: 'mySecretKey'}));
 app.use(passport.initialize());
-app.use(passport.session());
-
+//app.use(passport.session());
+app.use(passport.session({
+    secret: 'something',
+    cookie: {
+        secure: true
+}}));
 
 
 var flash = require('connect-flash');

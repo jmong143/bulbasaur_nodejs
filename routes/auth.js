@@ -88,7 +88,7 @@ router.get('/login', function(req, res) {
 });
 
 router.post('/login', function(req, res, next) {
-  passport.authenticate('login', { session: true },function(err, user, info) {
+  passport.authenticate('login', function(err, user, info) {
     if (err) {
       return next(err);
     }
@@ -107,31 +107,35 @@ router.post('/login', function(req, res, next) {
       var objLoginSuccess = {
         message : 'success',
         authorize : 'true',
-        token : token
+        token : token,
+        user
       }
+      /*
       var sessionProfile = {
         message: "success",
-        currentUser: {
+        currentUser:{
         objectId : req.user.objectId,
         username : req.user.username,
         fullname: req.user.fullname,
-        email: req.user.email,
-        avatar:  req.user.avatar
+        email: req.user.email
         }
       }
+      */
       var userProfile = {
         message: "success",
-        objectId : req.user.objectId,
-        username : req.user.username,
-        fullname: req.user.fullname,
-        email: req.user.email,
-        address: req.user.address,
-        contact: req.user.contact,
-        birthdate: req.user.birthdate,
-        avatar: req.user.avatar,
-        emailVerified: req.user.emailVerified
+        currentUser: {
+          objectId : req.user.objectId,
+          username : req.user.username,
+          fullname: req.user.fullname,
+          email: req.user.email,
+          address: req.user.address,
+          contact: req.user.contact,
+          birthdate: req.user.birthdate,
+          avatar: req.user.avatar,
+          emailVerified: req.user.emailVerified
+        }
       }
-      currentMeGlobal = sessionProfile;
+      //currentMeGlobal = sessionProfile;
       currentProfileGlobal = userProfile;
       return res.send(objLoginSuccess);
     });
@@ -141,21 +145,36 @@ router.post('/login', function(req, res, next) {
 //var tokenUser = tokenizer.verify;
 //var currentObjectId = "2rOrhGKkY3";
 router.get('/me', function(req, res){
-  var objMe = currentMeGlobal;
-  var isEmptySession = Object.keys(objMe).length;
+if(req.user){
+  var objMe = {
+     message: "success",
+     currentUser:{
+     objectId : req.user.objectId,
+     username : req.user.username,
+     fullname: req.user.fullname,
+     email: req.user.email
+     }
+   }
+   console.log("THIS IS MEEE-> " + req.user);
+}else{
+  var objMe = {message: "failed",result: "Please Login First"}
+}
+  res.send(objMe);
+  //var objMe = currentMeGlobal;
+  /*var isEmptySession = Object.keys(objMe).length;
   if(isEmptySession == 0){
-    objMe = {message: "failed",result: "User is not yet logged in"}
+    objMe = {message: "failed",result: "Please Login First"}
     res.send(objMe);
   }else{
-    res.send(currentProfileGlobal);
-  }
+    res.send(sessionProfile);
+  }*/
 });
 
 router.get('/profile', function(req, res){
-  var objProfile = currentMeGlobal;
+  var objProfile = currentProfileGlobal;
   var isEmptySession = Object.keys(objProfile).length;
   if(isEmptySession == 0){
-    objProfile = {message: "failed",result: "User is not yet logged in"}
+    objProfile = {message: "failed",result: "Please Login First"}
     res.send(objProfile);
   }else{
     // var objProfileSuccess = {message: "success"}
@@ -248,8 +267,20 @@ router.get('/forgot-password', function(req, res){
 router.post('/forgot-password', function(req, res){
   var email = req.body.email;
   AuthenticationController.forgotPassword(email, function(err, list){
-    var user = list[0];
-    res.send(user);
+    if (list == ""){
+      objForgot = {
+        message: "failed",
+        resultMessage: "Failed to Retrieve User Information",
+      };
+    }else{
+      var user = list[0];
+      objForgot = {
+        message: "success",
+        resultMessage: "Successfully Retrieve User Information",
+        user
+      };
+    }
+    res.send(objForgot);
   });
 });
 
@@ -281,6 +312,7 @@ router.get('/mail-signup/:objectId', function(req, res){
   });
 
 });
+
 
 router.get('/user/:objectId', function(req, res) {
   var params = req.params.objectId;
@@ -329,6 +361,7 @@ router.get('/logout', function(req, res) {
   }else{
     req.session.destroy();
     currentMeGlobal = {}
+    currentProfileGlobal = {}
     objLogout = {message: "success",resultMessage: "Congratulations, You have successfully logged out."}
   }
   res.send(objLogout);
