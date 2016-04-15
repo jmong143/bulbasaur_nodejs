@@ -285,8 +285,22 @@ router.get('/mail-signup/:objectId', function(req, res){
 router.get('/user/:objectId', function(req, res) {
   var params = req.params.objectId;
   UserModel.find( { $or:[ {'objectId':params}]},
-    function(err,docs){
-    if(!err) res.send(docs);
+    function(err,userFetch){
+      var user = userFetch[0];
+      if(user){
+        var objFetch = {
+          message: "success",
+          result: "successfully retrieve user",
+          user
+        }
+      }
+      else{
+        var objFetch = {
+          message: "failed",
+          result: "failed to retrieve user"
+        }
+      }
+    res.send(objFetch);
   });
 });
 
