@@ -30,7 +30,6 @@ var isAuthenticated = function (req, res, next) {
 	res.redirect('/ipostmo-auth/login');
 }
 var currentProfileGlobal = {}
-var currentMeGlobal = {}
 module.exports = function(passport){
 //CustomController codes here
 
@@ -110,33 +109,6 @@ router.post('/login', function(req, res, next) {
         token : token,
         user
       }
-      /*
-      var sessionProfile = {
-        message: "success",
-        currentUser:{
-        objectId : req.user.objectId,
-        username : req.user.username,
-        fullname: req.user.fullname,
-        email: req.user.email
-        }
-      }
-      */
-      var userProfile = {
-        message: "success",
-        currentUser: {
-          objectId : req.user.objectId,
-          username : req.user.username,
-          fullname: req.user.fullname,
-          email: req.user.email,
-          address: req.user.address,
-          contact: req.user.contact,
-          birthdate: req.user.birthdate,
-          avatar: req.user.avatar,
-          emailVerified: req.user.emailVerified
-        }
-      }
-      //currentMeGlobal = sessionProfile;
-      currentProfileGlobal = userProfile;
       return res.send(objLoginSuccess);
     });
   })(req, res, next);
@@ -145,42 +117,41 @@ router.post('/login', function(req, res, next) {
 //var tokenUser = tokenizer.verify;
 //var currentObjectId = "2rOrhGKkY3";
 router.get('/me', function(req, res){
-if(req.user){
-  var objMe = {
-     message: "success",
-     currentUser:{
-     objectId : req.user.objectId,
-     username : req.user.username,
-     fullname: req.user.fullname,
-     email: req.user.email
-     }
-   }
-   console.log("THIS IS MEEE-> " + req.user);
-}else{
+if(!req.user){
   var objMe = {message: "failed",result: "Please Login First"}
+}else{
+  console.log("THIS IS MEEE-> " + req.user);
+  var objMe = {
+    message: "success",
+    currentUser:{
+      objectId : req.user.objectId,
+      username : req.user.username,
+      fullname: req.user.fullname,
+      email: req.user.email
+    }
+  }
 }
   res.send(objMe);
-  //var objMe = currentMeGlobal;
-  /*var isEmptySession = Object.keys(objMe).length;
-  if(isEmptySession == 0){
-    objMe = {message: "failed",result: "Please Login First"}
-    res.send(objMe);
-  }else{
-    res.send(sessionProfile);
-  }*/
 });
 
 router.get('/profile', function(req, res){
-  var objProfile = currentProfileGlobal;
-  var isEmptySession = Object.keys(objProfile).length;
-  if(isEmptySession == 0){
-    objProfile = {message: "failed",result: "Please Login First"}
-    res.send(objProfile);
+  if(req.user){
+    objProfile = {
+      message: "success",
+      currentUser:{
+        objectId : req.user.objectId,
+        username : req.user.username,
+        fullname: req.user.fullname,
+        email: req.user.email,
+        address: req.user.address,
+        birthdate: req.user.birthdate,
+        avatar: req.user.avatar
+      }
+    }
   }else{
-    // var objProfileSuccess = {message: "success"}
-    //var objProfile = merge(objProfile, objProfileSuccess);
-    res.send(objProfile);
+    objProfile = {message: "failed",result: "Please Login First"}
   }
+  res.send(objProfile);
 });
 
 router.get('/get-profile', function(req, res){
@@ -191,11 +162,11 @@ router.get('/get-profile', function(req, res){
   });
 });
 
-router.get('/update', isAuthenticated, function(req, res){
+router.get('/update-profile', isAuthenticated, function(req, res){
   res.render('auth/edit', { user: req.user });
 });
 
-router.post('/update', function(req, res){
+router.post('/update-profile', function(req, res){
   //var objectId = req.user.objectId;
   //var objectId = "ttjnXLHQt7";
   /*UserModel.update({'objectId':"ttjnXLHQt7"}, {$set: {email : "k@gmail.com"}},function(err, result){
@@ -338,53 +309,14 @@ router.get('/user/:objectId', function(req, res) {
 
 
 router.get('/logout', function(req, res) {
-/*  if (req.isAuthenticated()){
-    req.session.destroy(function(err) {
-      var objLogout = {
-        result: "success",
-        resultMessage: "Congratulations, You have successfully logged out."
-      }
-      res.send(objLogout);
-    });
-  }else{
-    var objLogout = {
-        result: "failed",
-        resultMessage: "User not login"
-      }
-      res.send(objLogout);
-  } */
-
-  var objLogout = currentMeGlobal;
-  var isEmptySession = Object.keys(objLogout).length;
-  if(isEmptySession == 0){
-    objLogout = {message: "failed",resultMessage: "Failed to Logout! Make sure you're Logged in!"}
-  }else{
+  if(req.user){
     req.session.destroy();
-    currentMeGlobal = {}
-    currentProfileGlobal = {}
     objLogout = {message: "success",resultMessage: "Congratulations, You have successfully logged out."}
+  }else{
+    objLogout = {message: "failed",resultMessage: "Failed to Logout! Make sure you're Logged in!"}
   }
   res.send(objLogout);
-
-
-
-
-
-  /* var objLogout = currentMeGlobal;
-  var isEmptySession = Object.keys(objMe).length;
-  if(isEmptySession == 0){
-    objLogout = {message: "failed",result: "user not yet logged in"}
-    console.log("came from logout--->" + currentMeGlobal);
-  }else{
-    var objLogout = {
-      result: "success",
-      resultMessage: "Congratulations, You have successfully logged out."
-    }
-    res.send(objLogout);
-  } */
-
 });
-
 
 //module.exports = router;
 	return router;
