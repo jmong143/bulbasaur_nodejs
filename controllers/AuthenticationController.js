@@ -152,7 +152,7 @@ var nodemailer = require('nodemailer');
                     pass: 'dibs0102'
                 }
             });
-            var emailTemplate = '<div style="text-decoration: underline;"><a href = "http://localhost:2000/ipostmo-auth/update-password/'+ objectId +'">click to reset your password</a></div>';
+            var emailTemplate = '<div style="text-decoration: underline;"><a href = "http://54.169.169.163:2000/ipostmo-auth/update-password/'+ objectId +'">click to reset your password</a></div>';
             var mailOptions = {
               from: '"Ipostmo.com" <ipostmo@gmail.com>', // sender address
               to: 'email,' + email, // list of receivers
