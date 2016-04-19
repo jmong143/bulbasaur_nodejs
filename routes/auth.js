@@ -247,8 +247,7 @@ router.post('/forgot-password', function(req, res){
       var user = list[0];
       objForgot = {
         message: "success",
-        resultMessage: "Please check your email to change your password",
-        user
+        resultMessage: "Please check your email to change your password"
       };
     }
     res.send(objForgot);
