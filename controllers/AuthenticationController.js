@@ -145,7 +145,7 @@ var nodemailer = require('nodemailer');
             console.log("email not existing");
           }else{
             console.log("TO OBJECT ID -> " + list.objectId);
-            var transporter = nodemailer.createTransport({
+            var transporter = nodemailer.createTransport("SMTP", {
                 service: 'Gmail',
                 auth: {
                     user: 'seostardibs@gmail.com',
