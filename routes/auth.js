@@ -5,7 +5,7 @@ var tokenizer = require("../util/jwt-tokenizer");
 var configureRouting = require('../services/RouteService');
 var config = require('../config/application-settings');
 var merge = require('merge'), original, cloned;
-var ProceedUrl = "http://localhost:8000/";
+//var ProceedUrl = "http://localhost:8000/";
 var UserModel = require('../models/user');
 //settings = {modelName: route-alias};
 var settings = [
@@ -237,22 +237,27 @@ router.get('/forgot-password', function(req, res){
 
 router.post('/forgot-password', function(req, res){
   var email = req.body.email;
-  AuthenticationController.forgotPassword(email, function(err, list){
-    if (list == ""){
+  AuthenticationController.sendResetPassword(email, req, res, function(err, list){
+    if(list == ""){
       objForgot = {
         message: "failed",
-        resultMessage: "Failed to Retrieve User Information",
+        resultMessage: "Failed to retrieve your information",
       };
     }else{
       var user = list[0];
       objForgot = {
         message: "success",
-        resultMessage: "Successfully Retrieve User Information",
+        resultMessage: "Please check your email to change your password",
         user
       };
     }
     res.send(objForgot);
   });
+
+  // UserModel.findOne({ "email": email }, function (err, user) {
+  //   console.log("THIS IS USER" + JSON.stringify(user));
+  // });
+  //AuthenticationController.sendResetPassword(email, req, res);
 });
 
 router.get('/mail-signup/:objectId', function(req, res){
@@ -265,23 +270,43 @@ router.get('/mail-signup/:objectId', function(req, res){
     },function(err, result){
       UserModel.findOne({ "objectId": updateObjectId }, function (err, user) {
       console.log("THIS IS USER UPDATED ->" + JSON.stringify(user));
-      var userUpdatedProfile = {
-        message: "success",
-        objectId : user.objectId,
-        username : user.username,
-        fullname: user.fullname,
-        email: user.email,
-        address: user.address,
-        contact: user.contact,
-        birthdate: user.birthdate,
-        avatar: user.avatar,
-        emailVerified: user.emailVerified
-      }
-      currentProfileGlobal = userUpdatedProfile;
        res.render("auth/email-signup");
     });
   });
 
+});
+
+router.get('/update-password/:objectId', function(req, res){
+  var objectId = req.params.objectId;
+  console.log("passed OBJECT ID forgot" + objectId);
+  res.render("auth/email-forgot", {objectId : objectId});
+});
+
+router.post('/update-password/:objectId', function(req, res){
+  var objectId = req.params.objectId;
+  var newPassword = req.body.password
+  var hashPassword = AuthenticationController.makeHashPassword(newPassword);
+  UserModel.update({'objectId': objectId},
+  {$set: {
+      password : hashPassword
+    }
+  },function(err, result){
+    if(err){
+      var objUpdatePassword = {
+        message: "failed",
+        resultMessage: "Failed to update, Please try again",
+      }
+    }else{
+      if(req.user){
+        req.session.destroy();
+      }
+      var objUpdatePassword = {
+        message: "success",
+        resultMessage: "Your password is successfully updated",
+      }
+    }
+  res.send(objUpdatePassword);
+  });
 });
 
 

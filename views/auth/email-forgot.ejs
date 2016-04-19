@@ -1,0 +1,75 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<nav class="navbar navbar-default custom-nav" role="navigation" style="min-height:70px;">
+        <div class="container">
+            <div class="navbar-header" style="margin-bottom: 5px;">
+                <a class="navbar-brand" href="https://ipostmo.com/" target = "_blank"><img src = "/images/logo.png"/></a>
+            </div>
+        </div> <!-- /.navbar-collapse -->
+    </nav>
+
+<body style = "background-color: #ebebeb">
+<section class="login-view">
+	<div class="container">
+    	<div class="row">
+  			<div class="col-lg-3"></div>
+            <div class="col-lg-6" style="margin-top: -20px;">
+            	<div align="center">
+	    			<h2>Change Password</h2>
+	        		<p>Change your password in able to authenticate your account</p>
+	    		</div>
+	        	<div class="panel panel-default">
+	        		<div class="panel-body">
+						<div class="col-lg-1"></div>
+						<form id="forgotPasswordForm" class="form-horizontal" method="post" action = "">
+							<div class="col-lg-10" style="margin-top: 50px;">
+								<div class="form-group">
+						  			<label class="control-label" for="inputDefault"><small>New Password</small></label>
+                    <input type = "text" placeholder="Input New Password" value = "<%= objectId %>" name = "objectId" class = "hidden">
+                    <input type = "text" placeholder="Input New Password" name = "password" class = "form-control" id = "password">
+								</div>
+								<div class="form-group">
+						  			<label class="control-label" for="inputDefault"><small>Re type Password</small></label>
+						  			<input type = "text" placeholder="Re Type New Password" name = "rePassword" class = "form-control" id = "rePassword">
+								</div>
+								<div class="form-group">
+                  <button type = "submit" style="margin-bottom: 25px; margin-top: 25px;" class="btn btn-success btn-md btn-block" disabled>Update Password</button>
+								</div>
+							</div>
+						</form>
+						<div class="col-lg-1"></div>
+	        		</div>
+	        	</div>
+            </div>
+            <div class="col-lg-3"></div>
+		</div>
+	</div>
+</section>
+</body>
+
+<footer class="footer-container footer" style="background: #A7CE3C; padding-top:20px;">
+      <div class="container text-center">
+         <div class="col-lg-12">
+      		<div class="col-md-4">
+      			<p><b>Address</b><p>
+      			<p><span class = "glyphicon glyphicon-map-marker"></span> G/F Unit 14, East of Galleria, Topaz Road, Ortigas Center, Pasig City PH</p>
+      		</div>
+      		<div class="col-md-4">
+        		<p><b>Email</b><p>
+        		<p><span class = "glyphicon glyphicon-envelope"></span> ipostmo@gmail.com</p>
+      		</div>
+      		<div class="col-md-4">
+		        <p><a href = "#">What is iPostmo</a><p>
+		        <p><a href = "#">Terms of Services</a><p>
+		        <p><a href = "#">Privacy Policy</a><p>
+      		</div>
+    	</div>
+      	<div class="col-md-12">
+      		<p class = "text-center">&copy Copyright 2016 All Rights Reserved - Ipostmo Philippines</p>
+      	</div>
+  	  </div>
+	</footer>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src = "/javascripts/validator.js"></script>
+  <script src = "/javascripts/forgotPasswordValidation.js"></script>

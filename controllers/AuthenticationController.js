@@ -134,6 +134,38 @@ var nodemailer = require('nodemailer');
         }
           console.log('Message sent: ' + info.response);
         });
+      },
+
+      sendResetPassword : function(email, req, res, callback){
+        var searchCriteria = {"email" : email};
+        this.search(searchCriteria, function(err, list){
+          var user = list[0];
+          var objectId = user.objectId;
+          if(list == ""){
+            console.log("email not existing");
+          }else{
+            console.log("TO OBJECT ID -> " + list.objectId);
+            var transporter = nodemailer.createTransport({
+                service: 'Gmail',
+                auth: {
+                    user: 'seostardibs@gmail.com',
+                    pass: 'dibs0102'
+                }
+            });
+            var emailTemplate = '<div style="text-decoration: underline;"><a href = "http://localhost:2000/ipostmo-auth/update-password/'+ objectId +'">click to reset your password</a></div>';
+            var mailOptions = {
+              from: '"Ipostmo.com" <ipostmo@gmail.com>', // sender address
+              to: 'email,' + email, // list of receivers
+              subject: 'Welcome to Ipostmo.com!', // Subject line
+              text: 'Ipostmo.com Verification', // plaintext body
+              html: emailTemplate // html body
+            };
+            transporter.sendMail(mailOptions, function(error, info){
+              console.log('Message sent for forgot password: ' + info.response);
+            });
+          }
+          callback(err, list)
+        });
       }
   };
 
