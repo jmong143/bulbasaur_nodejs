@@ -11,7 +11,7 @@ var routeSetting = require('./routes/settings');
 var config = require('./config/application-settings');
 
 
-mongoose.connect('mongodb://localhost/ipostmo-v2');
+mongoose.connect('mongodb://localhost/ipostmo');
 //http://54.169.169.163/
 //mongoose.on('error', console.error.bind(console, 'connection error:'));
 var app = express();

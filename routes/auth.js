@@ -331,6 +331,25 @@ router.get('/user/:objectId', function(req, res) {
   });
 });
 
+router.get('/getPhoto/:objectId', function(req, res) {
+  var objectId = req.params.objectId;
+  AuthenticationController.profileById(objectId, function(err, list){
+    var userInfo = list[0];
+    if (list == ""){
+      obj = {
+        message: "failed",
+        resultMessage: "this user doesn't have an avatar"
+      };
+    }else{
+      obj = {
+        message: "success",
+        resultMessage: "Successfully Retrieve User Avatar",
+        avatar: userInfo.avatar
+      };
+    }
+    res.send(obj);
+  });
+});
 
 router.get('/logout', function(req, res) {
   if(req.user){
