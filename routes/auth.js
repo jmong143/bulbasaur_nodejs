@@ -190,24 +190,42 @@ router.post('/update-profile', function(req, res){
     }
   },function(err, result){
     if (err) {
-      obj = {
-        message: "failed",
-        resultMessage: "Failed to update, Please make sure you completed the form"
-      }
+      obj = {message: "failed",resultMessage: "Failed to update, Please make sure you completed the form"}
     }else{
-      obj = {
-        message: "success",
-        resultMessage: "Congratulations, Your Profile is Updated!"
-      }
+      obj = {message: "success",resultMessage: "Congratulations, Your Profile is Updated!"}
     }
     console.log("this is obj" + JSON.stringify(obj));
     return res.send(obj)
   });
+});
 
+router.get('/avatar', function(req, res){
+  if(req.user){
+    res.render('auth/avatar');
+  }else{
+    res.render('auth/login');
+  }
+});
 
-/*  AuthenticationController.updateProfile(req, res, objectId, function(err, list){
-    res.send(list);
-  }); */
+router.post('/avatar', function(req, res){
+  if(req.user){
+    var objectId = req.user.objectId
+    UserModel.update({'objectId': objectId},
+    {$set: {
+      avatar : req.body.avatar
+    }
+    },function(err, result){
+      if (err) {
+        obj = {message: "failed",resultMessage: "Failed to create avatar!, Please try again"}
+      }else{
+        obj = {message: "success",resultMessage: "Congratulations, You have successfully set your avatar,"}
+      }
+      console.log("this is obj" + JSON.stringify(obj));
+    });
+  }else{
+    obj = {message: "failed",resultMessage: "Failed to create avatar!, Please login first"}
+  }
+  return res.send(obj)
 });
 
 
@@ -338,7 +356,7 @@ router.get('/getPhoto/:objectId', function(req, res) {
     if (list == ""){
       obj = {
         message: "failed",
-        resultMessage: "this user doesn't have an avatar"
+        resultMessage: "This user doesn't have an avatar"
       };
     }else{
       obj = {
