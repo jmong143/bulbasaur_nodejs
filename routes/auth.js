@@ -186,20 +186,7 @@ router.post('/update-profile', function(req, res){
       birthdate : req.body.birthdate,
       contact : req.body.contact,
       email : req.body.email,
-      fullname : req.body.fullname,
-      results = {
-        "username" 			: 	req.body.username,
-        "oldUserId" 		: 	null,
-        "objectId" 			: 	currentObjectId,
-        "fullname" 			:		req.body.fullname,
-        "emailVerified" :	 	false,
-        "email" 				: 	req.body.email,
-        //"createdAt" 		: 	AuthenticationController.getDateTime(),
-        "password" 			: 	req.body.password,
-        "address" 			: 	req.body.address,
-        "avatar"				:		req.body.avatar
-        //"updatedAt" 		: 	AuthenticationController.getDateTime()
-      }
+      fullname : req.body.fullname
     }
   },function(err, result){
     if (err) {

@@ -35,7 +35,7 @@ module.exports = function(passport){
 												newUser.birthdate = req.body.birthdate;
 												newUser.contact = req.body.contact;
 												newUser.avatar = null;
-												newUser.results = {
+												/*newUser.results = {
 													"username" 			: 	username,
 													"oldUserId" 		: 	null,
 													"objectId" 			: 	newUser.objectId,
@@ -47,7 +47,7 @@ module.exports = function(passport){
 													"address" 			: 	newUser.address,
 													"avatar"				:		newUser.avatar
 													//"updatedAt" 		: 	AuthenticationController.getDateTime()
-												}
+												}*/
 												/* newUser.createdAt = AuthenticationController.getDateTime();
 												newUser.updatedAt = "0000:00:00:00:00:00" */
 
