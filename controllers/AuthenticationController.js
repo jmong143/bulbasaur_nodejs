@@ -154,7 +154,7 @@ var nodemailer = require('nodemailer');
                 }
             });
             //var emailTemplate = '<div align="center"><img src="logo.png"/><h3 style="color: #315C7E;">Click Reset button to reset your password</h3><a href = "http://54.169.83.117:2000/ipostmo-auth/update-password/'+ objectId +'" style="width: 130px; height: 50px; background-color:#315C7E; color: white; border-radius: 10px; font-size: 20px;"> Reset </a></div>'
-            var emailTemplate = '<div align="center"><img src = "images/logo.png"/><h3 style="color: #315C7E;">Click Activate button to activate your account</h3><a href = "http://54.169.83.117:2000/ipostmo-auth/update-password/'+ objectId +'" style = "text-decoration:none; margin: 0; background: #315C7E; color: #fff; padding: 9px; font-size: 18px; line-height: 18px; border: 0;"> Reset</a></div>';
+            var emailTemplate = '<div align="center"><img src = "images/logo.png"/><h3 style="color: #315C7E;">Click Reset button to reset your password</h3><a href = "http://54.169.83.117:2000/ipostmo-auth/update-password/'+ objectId +'" style = "text-decoration:none; margin: 0; background: #315C7E; color: #fff; padding: 9px; font-size: 18px; line-height: 18px; border: 0;"> Reset</a></div>';
             //<div style="text-decoration: underline;"><a href = "http://54.169.83.117:2000/ipostmo-auth/update-password/'+ objectId +'">click to reset your password 1</a></div>';
             var mailOptions = {
               from: '"Ipostmo.com" <ipostmo@gmail.com>', // sender address
