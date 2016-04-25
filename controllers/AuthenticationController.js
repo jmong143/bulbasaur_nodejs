@@ -120,7 +120,8 @@ var nodemailer = require('nodemailer');
         });
         console.log("new object ID-> " + objectId);
         // var emailTemplate = '<div style="text-decoration: underline;"><a href = "http://localhost:2000/ipostmo-auth/mail-signup/'+ objectId +'">click to verify your account101</a></div>';
-        var emailTemplate = '<div style="text-decoration: underline;"><a href = "http://54.169.83.117:2000/ipostmo-auth/mail-signup/'+ objectId +'">click to verify your account101</a></div>';
+        var emailTemplate = '<div align="center"><img src="logo.png"/><h3 style="color: #315C7E;">Click Activate button to activate your account</h3><a href = http://54.169.83.117:2000/ipostmo-auth/mail-signup/'+ objectId +'" style="width: 130px; height: 50px; background-color:#315C7E; color: white; border-radius: 10px; font-size: 20px;"> Activate </a></div>';
+
         var mailOptions = {
           from: '"Ipostmo.com" <ipostmo@gmail.com>', // sender address
           to: 'email,' + email, // list of receivers
@@ -152,7 +153,8 @@ var nodemailer = require('nodemailer');
                     pass: 'dibs0102'
                 }
             });
-            var emailTemplate = '<div style="text-decoration: underline;"><a href = "http://54.169.83.117:2000/ipostmo-auth/update-password/'+ objectId +'">click to reset your password 1</a></div>';
+            var emailTemplate = '<div align="center"><img src="logo.png"/><h3 style="color: #315C7E;">Click Reset button to reset your password</h3><a href = "http://54.169.83.117:2000/ipostmo-auth/update-password/'+ objectId +'" style="width: 130px; height: 50px; background-color:#315C7E; color: white; border-radius: 10px; font-size: 20px;"> Reset </a></div>'
+            //<div style="text-decoration: underline;"><a href = "http://54.169.83.117:2000/ipostmo-auth/update-password/'+ objectId +'">click to reset your password 1</a></div>';
             var mailOptions = {
               from: '"Ipostmo.com" <ipostmo@gmail.com>', // sender address
               to: 'email,' + email, // list of receivers
