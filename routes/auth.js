@@ -313,6 +313,7 @@ router.post('/update-password/:objectId', function(req, res){
         message: "failed",
         resultMessage: "Failed to update, Please try again",
       }
+      res.send("Failed to update your password. Please Try Again");
     }else{
       if(req.user){
         req.session.destroy();
@@ -321,8 +322,10 @@ router.post('/update-password/:objectId', function(req, res){
         message: "success",
         resultMessage: "Your password is successfully updated",
       }
+      res.render("auth/forgot-redirect");
     }
-  res.send(objUpdatePassword);
+
+  //res.send(objUpdatePassword);
   });
 });
 
