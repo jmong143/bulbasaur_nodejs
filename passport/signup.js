@@ -12,9 +12,9 @@ module.exports = function(passport){
             passReqToCallback : true
         },
         function(req, username, password, done) {
-					var checkExistEmail = req.body.email;
+
             findOrCreateUser = function(){
-								User.find({ $or:[ {'username':username}, {'email':checkExistEmail} ]}, function(err, user) {
+                User.findOne({ 'username' : username }, function(err, user) {
                     if (err){
                         console.log('Error in SignUp: '+ err);
                         return done(err);
