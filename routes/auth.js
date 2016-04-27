@@ -195,24 +195,27 @@ router.post('/update-profile', function(req, res){
       obj = {message: "success",resultMessage: "Congratulations, Your Profile is Updated!"}
     }
     console.log("this is obj" + JSON.stringify(obj));
-    return res.send(obj)
+    res.send(obj)
   });
 });
 
 router.get('/avatar', function(req, res){
   if(req.user){
-    res.render('auth/avatar');
+    res.render('auth/avatar', {user : req.user});
   }else{
     res.render('auth/login');
   }
 });
 
 router.post('/avatar', function(req, res){
-  if(req.user){
-    var objectId = req.user.objectId
+  // if(req.user){
+    var objectId = req.body.objectId
+    var avatarUrl = req.body.avatar;
+    console.log("objectId for avatar -> " + objectId);
+    console.log("avatar URL -> " + avatarUrl);
     UserModel.update({'objectId': objectId},
     {$set: {
-      avatar : req.body.avatar
+      avatar : avatarUrl
     }
     },function(err, result){
       if (err) {
@@ -222,10 +225,10 @@ router.post('/avatar', function(req, res){
       }
       console.log("this is obj" + JSON.stringify(obj));
     });
-  }else{
+  /*}else{
     obj = {message: "failed",resultMessage: "Failed to create avatar!, Please login first"}
-  }
-  return res.send(obj)
+  }*/
+  res.send(obj)
 });
 
 
