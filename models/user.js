@@ -3,20 +3,6 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 
-var UserInfo = new Schema({
-  username:String,
-  oldUserId:String,
-  objectId: String,
-  fullname:String,
-  emailVerified:Boolean,
-  email:String,
-  //createdAt:Date,
-  password:String,
-  address: String,
-  //sessionToken:String,
-  //updatedAt:Date,
-},{ _id : false });
-
 // create a schema
 var userSchema = new Schema({
   name: String,
@@ -29,12 +15,13 @@ var userSchema = new Schema({
   fullname: String,
   email: String,
   emailVerified: Boolean,
-  birthdate: String,
+  //birthdate: String,
+  birthdate: {
+    __type : {type: String, default: "Date"},
+    iso : Date
+  },
   contact: String,
-  avatar: String,
-  results: [UserInfo]
-  /*created_at: Date,
-  updated_at: Date */
+  avatar: String
 });
 
 

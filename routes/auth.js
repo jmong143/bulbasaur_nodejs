@@ -177,17 +177,30 @@ router.post('/update-profile', function(req, res){
   console.log("object id for update ------------->" + currentObjectId);
   var password = req.body.password;
   var hashPass = AuthenticationController.makeHashPassword(password);
+  if (password == ""){
+    var setFieldsForUpdate = {
+        address : req.body.address,
+        birthdate : req.body.birthdate,
+        contact : req.body.contact,
+        email : req.body.email,
+        fullname : req.body.fullname
+      }
+      console.log("---> empty");
+  }else{
+    var setFieldsForUpdate = {
+        //username : req.body.username,
+        password :hashPass,
+        address : req.body.address,
+        birthdate : req.body.birthdate,
+        contact : req.body.contact,
+        email : req.body.email,
+        fullname : req.body.fullname
+      }
+      console.log("---> has password");
+  }
 
   UserModel.update({'objectId': currentObjectId},
-  {$set: {
-      username : req.body.username,
-      password :hashPass,
-      address : req.body.address,
-      birthdate : req.body.birthdate,
-      contact : req.body.contact,
-      email : req.body.email,
-      fullname : req.body.fullname
-    }
+  {$set: setFieldsForUpdate
   },function(err, result){
     if (err) {
       obj = {message: "failed",resultMessage: "Failed to update, Please make sure you completed the form"}

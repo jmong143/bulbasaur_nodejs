@@ -9,15 +9,15 @@
 					<input type='text' name='currentObjectId' class='form-control' placeholder='Username' value = '<%= user.objectId %>'>
 				</p>
 				<p>
-					<input type='text' name='username' class='form-control' placeholder='Username' value = '<%= user.username %>' required autofocus>
+					<input type='text' name='username' class='form-control' placeholder='Username' value = '<%= user.username %>' disabled>
 				</p>
 
 				<p>
-					<input type='password' name='password' class='form-control nomargin' placeholder='Password' required>
+					<input type='password' name='password' class='form-control nomargin' placeholder='Password'>
 				</p>
 
 				<p>
-					<textarea name = "address" class='form-control nomargin' placeholder='Address' required><%= user.address %></textarea>
+					<textarea name = "address" class='form-control nomargin' placeholder='Address' required  autofocus><%= user.address %></textarea>
 				</p>
 
 				<p>
