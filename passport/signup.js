@@ -35,22 +35,9 @@ module.exports = function(passport){
 												newUser.birthdate.iso = req.body.birthdate;
 												newUser.contact = req.body.contact;
 												newUser.avatar = null;
-												/*newUser.results = {
-													"username" 			: 	username,
-													"oldUserId" 		: 	null,
-													"objectId" 			: 	newUser.objectId,
-													"fullname" 			:		newUser.fullname,
-													"emailVerified" :	 	false,
-													"email" 				: 	newUser.email,
-													//"createdAt" 		: 	AuthenticationController.getDateTime(),
-													"password" 			: 	newUser.password,
-													"address" 			: 	newUser.address,
-													"avatar"				:		newUser.avatar
-													//"updatedAt" 		: 	AuthenticationController.getDateTime()
-												}*/
-												/* newUser.createdAt = AuthenticationController.getDateTime();
-												newUser.updatedAt = "0000:00:00:00:00:00" */
-
+												newUser.coverPhoto = null;
+												newUser.createdAt = new Date();
+												newUser.updatedAt = new Date();
                         newUser.save(function(err) {
                             if (err){
                                 console.log('Error in Saving user: '+ err);

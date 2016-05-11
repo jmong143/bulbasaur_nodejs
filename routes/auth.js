@@ -245,6 +245,36 @@ router.post('/avatar', function(req, res){
 });
 
 
+router.get('/cover-photo', function(req, res){
+  if(req.user){
+    res.render('auth/cover-photo', {user : req.user});
+  }else{
+    res.render('auth/login');
+  }
+});
+
+router.post('/cover-photo', function(req, res){
+    var objectId = req.body.objectId
+    var coverPhotoUrl = req.body.coverPhoto;
+    console.log("objectId for avatar -> " + objectId);
+    console.log("cover photo URL -> " + coverPhotoUrl);
+    UserModel.update({'objectId': objectId},
+    {$set: {
+      coverPhoto : coverPhotoUrl
+    }
+    },function(err, result){
+      if (err) {
+        obj = {message: "failed",resultMessage: "Failed to create cover photo!, Please try again"}
+      }else{
+        obj = {message: "success",resultMessage: "Congratulations, You have successfully set your cover photo,"}
+      }
+      console.log("this is obj" + JSON.stringify(obj));
+    });
+  res.send(obj)
+});
+
+
+
 router.get('/profile/:userid', function(req, res){
   var userId = req.params.userid;
   AuthenticationController.profileById(userId, function(err, list){

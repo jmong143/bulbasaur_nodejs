@@ -21,7 +21,10 @@ var userSchema = new Schema({
     iso : Date
   },
   contact: String,
-  avatar: String
+  avatar: String,
+  coverPhoto: String,
+  createdAt : Date,
+  updatedAt : Date
 });
 
 
