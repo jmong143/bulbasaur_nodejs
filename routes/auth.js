@@ -266,7 +266,7 @@ router.post('/cover-photo', function(req, res){
       if (err) {
         obj = {message: "failed",resultMessage: "Failed to create cover photo!, Please try again"}
       }else{
-        obj = {message: "success",resultMessage: "Congratulations, You have successfully set your cover photo,"}
+        obj = {message: "success",resultMessage: "Congratulations, You have successfully set your cover photo"}
       }
       console.log("this is obj" + JSON.stringify(obj));
     });
